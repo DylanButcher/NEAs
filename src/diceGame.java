@@ -9,10 +9,13 @@ public class diceGame {
     private static HashMap<String, String> authorisedUsers = new HashMap<>();
     private static int loginAttempts = 3;
     private static String[] inputUser = new String[2], inputPass = new String[2];  //array to hold usernames and passwords entered by usser
+    private static int[] points ={0,0};
+    private static int[] extraGo = new int[2];
 
     public static void main(String[] args) {
         importValidUsers();
-        menu();
+       // menu();
+        game();
     }
 
     private static void menu() {
@@ -67,24 +70,9 @@ public class diceGame {
         if (inputPass[0].equals(authorisedUsers.get(inputUser[0])) && inputPass[1].equals(authorisedUsers.get(inputUser[1]))) {
             game();
         } else {
-            loginFail();
-        }
-
-        /*if (authorisedUsers.get(inputUser[0]).equals(inputPass[0])) && authorisedUsers.get(inputUser[1]).equals(inputPass[1])) {
-            game();
-        } else {
-            loginFail();
-        }
-
-
-        if (authorisedUsers.get(inputUser[0]) == null || authorisedUsers.get(inputUser[1]) == null) {  //uses the usernames as keys to see if they are found in the hashmap and if theyre not, it returns null so heres a work around it
             loginAttempts--;
             loginFail();
-        } else if ((authorisedUsers.get(inputUser[0])).equals(inputPass[0]) && (authorisedUsers.get(inputUser[1])).equals(inputPass[1])) { //if both usernames are found in hashmap it says all good :)
-            game();
-        } else {
-            loginFail();
-        }*/
+        }
     }
 
     private static void loginFail() {
@@ -100,31 +88,62 @@ public class diceGame {
     }
 
     private static void game() {
-        int[] points = new int[2];
-        int dice1, dice2;
-        boolean isDouble;
-
         for (int i = 0; i < 5; i++) {
             divider();
+            System.out.println("                ROUND " + (i + 1));
             for (int j = 0; j < 2; j++) {
-                divider();
-                System.out.println("This is "+inputUser[j]+"'s roll");
-                dice1 = roleDice();
-                dice2 = roleDice();
-                System.out.println(inputUser[j] + " rolled a " + dice1 + " and a " + dice2);
-                points[j] = rulesCheck(j);
-                isDouble = rollDouble(dice1, dice2);
-                if(isDouble){
-                    System.out.println("Congrats "+inputUser[j]+" gets an extra roll ");
-                }
-                points[j] += (dice1+dice2);
-                System.out.println(inputUser[j]+"'s Total score for the round is "+points[j]);
+                diceRoll(j);
             }
+        }
+
+            for (int i = 0; i < 2; i++) {
+                divider();
+                if (extraGo[i] > 0) {
+                    System.out.println(inputUser[i] + " has " + extraGo[i] + " extra go's");
+                    extraGos(extraGo[i], i);
+                    extraGo[i] = 0;
+                }
+            }
+            winner();
+    }
+
+    private static void diceRoll(int playerID) {
+        int dice1, dice2;
+        boolean isDouble;
+        pause();
+        divider();
+        System.out.println("This is " + inputUser[playerID] + "'s roll");
+        dice1 = roleDice();
+        dice2 = roleDice();
+        System.out.println(inputUser[playerID] + " rolled a " + dice1 + " and a " + dice2);
+        points[playerID] += (dice1 + dice2);
+        points[playerID] = rulesCheck(points[playerID]);
+        isDouble = rollDouble(dice1, dice2);
+        if (isDouble) {
+            System.out.println("Congrats " + inputUser[playerID] + " gets an extra roll ");
+            extraGo[playerID] += 1;
+        }
+        System.out.println(inputUser[playerID] + "'s Total score for the round is " + points[playerID]);
+    }
+
+    private static void extraGos(int numberOfTimes, int playerID) {
+        divider();
+        for (int i = 0; i < numberOfTimes; i++) {
+            diceRoll(playerID);
+        }
+        winner();
+    }
+
+    private static void pause() {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
     }
 
     private static boolean rollDouble(int d1, int d2) {
-        return ((d1 == d2) ? true : false);
+        return d1 == d2;
     }
 
     private static int roleDice() {
@@ -133,17 +152,35 @@ public class diceGame {
     }
 
     private static int rulesCheck(int points) {
+        if (points % 2 == 0) {
+            points += 10;
+        } else  {
+            points -= 5;
+        }
         if (points < 0) {
             points = 0;
-        } else if (points % 2 == 0) {
-            points += 10;
-        } else {
-            points -= -5;
         }
         return points;
     }
+    private static void winner() {
+        if (points[0] == points[1]) {
+            draw();
+            int winner = (points[0] > points[1] ? 0 : 1);
+            divider();
+            System.out.println("THE WINNER IS " + (inputUser[winner].toUpperCase()) + " WITH THE SCORE OF " + points[winner]);
+        }
+    }
+    private static void draw(){
+        points[0] = roleDice();
+        points[1] = roleDice();
+        divider();
+        System.out.println("Points were equal, reroll has done");
+            winner();
+        }
+
+
 
     private static void divider() {
-        System.out.println("-----------------------------------------");
+        System.out.println("----------------------------------------");
     }
 }
