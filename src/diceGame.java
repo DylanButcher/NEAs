@@ -14,7 +14,7 @@ public class diceGame {
 
     public static void main(String[] args) {
         importValidUsers();
-       // menu();
+       menu();
         game();
     }
 
