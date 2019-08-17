@@ -126,9 +126,7 @@ public class dice {
                     points[1] += dice();
                     System.out.println(name + "Scored a " + points[i]);
                 }
-                if (points[0] != points[1]) {   //if theyre not equal
-                    winnerFound = true;         //then a winner has been found
-                }
+                winnerFound = ((points[0] != points[1]) ? true:false) ;   //if theyre not equal then a winner has been found
             } while (!winnerFound);
         } else {
             System.out.println("We have found a winner, Drum roll please...");
@@ -137,12 +135,7 @@ public class dice {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-            int winnerID;
-            if (players[0][1] > players[1][1]) {    //finds which person has the higher score and sets the winnerID to their value within the array.
-                winnerID = 0;
-            } else {
-                winnerID = 1;
-            }
+            int winnerID = (players[0][1] > players[1][1]? 0 : 1);
             breaker();
             System.out.println("The winner is " + getPlayerName(winnerID) + " with a score of " + players[winnerID][1]);
             menu();
@@ -178,13 +171,7 @@ public class dice {
     }
 
     private static String getPlayerName(int playerNumber) { //checks the playerID so they can get that players username
-        String name;
-        if (playerNumber == 0) {
-            name = player1name;
-        } else {
-            name = player2name;
-        }
-        return name;
+        return (playerNumber ==0? player1name : player2name);
     }
 
     private static void actualDiceGame(int i) { //so heres  the game logic and stuff
@@ -206,14 +193,9 @@ public class dice {
     }
 
     private static int scoreCheck(int score) {  //based upon whats said in the guidebook thing
-        if (score < 0) {    //totals cant be less than 0 so if it is,, it sets it back to zero
-            score = 0;
-        } else if (score % 2 == 0) {    // even totals get an extra 10 points
-            score += 10;
-        } else {    //if its not even or below zero then its odd so they get 5 points deducted
-            score -= 5;
-        }
-        return score;      //returns their score after logic
+        score += ((score % 2 ==0)? 10: -5);
+        score = score<0? 0 : score;
+        return score;
     }
 
     private static int dice() { //heres the actuall dice
