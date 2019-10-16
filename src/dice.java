@@ -15,9 +15,9 @@ public class dice {
     private static void importValidUsers() {    //imports users from text file called users
         try {
             String fileLine;
-            BufferedReader reader = new BufferedReader(new FileReader("users.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("users.csv"));
             while ((fileLine = reader.readLine()) != null) {
-                String[] splits = fileLine.split(":");  //usernames and passwords are splits up by a colon in the text file so it splits them into username and password
+                String[] splits = fileLine.split(",");  //usernames and passwords are splits up by a colon in the text file so it splits them into username and password
                 users.put(splits[0], splits[1]);        //assigns them to a hashmap to be used in the login process
             }
         } catch (IOException e) {   //some gay errors
@@ -66,7 +66,7 @@ public class dice {
     private static void menu() {
         Scanner scan = new Scanner(System.in);  //alows user input
         breaker();
-        System.out.print("Welcome to the Dice Game, what would you like to do(type help if unknown) >>> ");
+        System.out.print("Welcome to the Dice game.Game, what would you like to do(type help if unknown) >>> ");
         String option = scan.nextLine();    //the option they select is stored
         switch (option.toUpperCase()) { //what they entered is taken to uppercase for easy comparison
             case ("HELP"):
@@ -126,7 +126,7 @@ public class dice {
                     points[1] += dice();
                     System.out.println(name + "Scored a " + points[i]);
                 }
-                winnerFound = ((points[0] != points[1]) ? true:false) ;   //if theyre not equal then a winner has been found
+                winnerFound = ((points[0] != points[1])) ;   //if theyre not equal then a winner has been found
             } while (!winnerFound);
         } else {
             System.out.println("We have found a winner, Drum roll please...");
@@ -194,8 +194,7 @@ public class dice {
 
     private static int scoreCheck(int score) {  //based upon whats said in the guidebook thing
         score += ((score % 2 ==0)? 10: -5);
-        score = score<0? 0 : score;
-        return score;
+        return (score<0)? 0 : score;
     }
 
     private static int dice() { //heres the actuall dice
